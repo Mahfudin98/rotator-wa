@@ -9,7 +9,7 @@ class Rotator extends Model
 {
     use HasFactory;
 
-    protected $guarded =[];
+    protected $fillable =['link_id', 'urutan', 'name', 'phone'];
 
     public function link()
     {

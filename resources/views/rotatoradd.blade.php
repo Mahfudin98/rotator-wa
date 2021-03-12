@@ -75,7 +75,7 @@ input.remove
             <h2 class="text-center">TAMBAH DATA LINK ROTATOR</h2>
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col-md-8 p-4 d-flex flex-column position-static">
-                    <form action="{{ route('post.rotator') }}" method="post">
+                    <form action="{{ route('post.rotator') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Rotator</label>
@@ -141,13 +141,22 @@ input.remove
                             @enderror
                         </div>
 
-                        <fieldset id="buildyourform">
+                        <fieldset>
                             <legend>Tambahkan CS Disini!</legend>
+                            <div class="input_fields_wrap mb-3">
+                                <div>
+                                    <label class="form-label" for="namecs">Nama CS</label>
+                                    <input type="text" name="csname[]" class="form-control" id="namecs">
+                                    <label class="form-label" for="phone">No HP</label>
+                                    <input type="text" name="phone[]" class="form-control" id="phone">
+                                    <input type="hidden" name="urutan[]" value="1">
+                                </div>
+                            </div>
                         </fieldset>
                         <div class="float-right">
-                            <button type="button" class="btn btn-success" value="Add a field" id="add"><i class="fa fa-plus"></i> Tambah Data CS</button>
+                            <button class="add_field_button btn btn-success"><i class="fa fa-plus"></i> Tambah Field</button>
                         </div>
-
+                        <br>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -161,6 +170,15 @@ input.remove
                                     <button class="btn btn-success" onclick="myFunction()">Copy text</button>
                                 </div>
                             @endif
+
+                            @if (session('error'))
+                            <div class="alert alert-error text-white disable">
+                                {{session('error')}}
+                            </div>
+                                {{-- <div class="text-center">
+                                    <button class="btn btn-success" onclick="myFunction()">Copy text</button>
+                                </div> --}}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -172,54 +190,32 @@ input.remove
 
 @section('js')
 <script>
-    $(document).ready(function() {
-        $("#add").click(function() {
-            var lastField = $("#buildyourform div:last");
-            var intId = (lastField && lastField.length && lastField.data("idx") + 1) || 1;
-            var fieldWrapper = $("<div class=\"fieldwrapper\" id=\"field" + intId + "\"/>");
-            fieldWrapper.data("idx", intId);
-            var fName = $("<input id=\"csname\" type=\"hidden\" class=\"form-control\" name=\"csname\" />");
-            var fLabelName = $("<label for=\"csname\" class=\"form-label\">Nama CS</label>");
-            var fName = $("<input id=\"csname\" type=\"text\" class=\"form-control\" name=\"csname\" placeholder=\"Nama CS\" />");
-            var fLabelPhone = $("<label for=\"phone\" class=\"form-label\">Nomor HP CS</label>");
-            var fPhone = $("<input id=\"phone\" type=\"tel\" class=\"form-control\" name=\"phone\" placeholder=\"Nomor HP CS\" />");
-            // var fPhone = $("<select class=\"fieldtype\"><option value=\"checkbox\">Checked</option><option value=\"textbox\">Text</option><option value=\"textarea\">Paragraph</option></select>");
-            // var removeButton = $("<input type=\"button\" class=\"btn btn-danger remove\" value=\"fa fa-trash\" /> <br>");
-            var removeButton = $("<br><button type=\"button\" class=\"btn btn-danger\"><i class=\"fa fa-trash\"></i></button><br>")
-            removeButton.click(function() {
-                $(this).parent().remove();
-            });
-            fieldWrapper.append(fLabelName);
-            fieldWrapper.append(fName);
-            fieldWrapper.append(fLabelPhone);
-            fieldWrapper.append(fPhone);
-            fieldWrapper.append(removeButton);
-            $("#buildyourform").append(fieldWrapper);
-        });
-        $("#preview").click(function() {
-            $("#yourform").remove();
-            var fieldSet = $("<fieldset id=\"yourform\"><legend>Your Form</legend></fieldset>");
-            $("#buildyourform div").each(function() {
-                var id = "input" + $(this).attr("id").replace("field","");
-                var label = $("<label for=\"" + id + "\">" + $(this).find("input.fieldname").first().val() + "</label>");
-                var input;
-                switch ($(this).find("select.fieldtype").first().val()) {
-                    case "checkbox":
-                        input = $("<input type=\"checkbox\" id=\"" + id + "\" name=\"" + id + "\" />");
-                        break;
-                    case "textbox":
-                        input = $("<input type=\"text\" id=\"" + id + "\" name=\"" + id + "\" />");
-                        break;
-                    case "textarea":
-                        input = $("<textarea id=\"" + id + "\" name=\"" + id + "\" ></textarea>");
-                        break;
-                }
-                fieldSet.append(label);
-                fieldSet.append(input);
-            });
-            $("body").append(fieldSet);
-        });
-    });
+$(document).ready(function() {
+	var max_fields      = 10; //maximum input boxes allowed
+	var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
+	var add_button      = $(".add_field_button"); //Add button ID
+
+	var x = 1; //initlal text box count
+	$(add_button).click(function(e){ //on add input button click
+		e.preventDefault();
+		if(x < max_fields){ //max input box allowed
+			x++; //text box increment
+			$(wrapper).append('<div class="mb-3">' +
+                                    '<hr>' +
+                                    '<label class="form-label" for="namecs">Nama CS</label>' +
+                                    '<input type="text" name="csname[]" class="form-control" id="namecs">' +
+                                    '<label class="form-label" for="phone">No HP</label>' +
+                                    '<input type="text" name="phone[]" class="form-control" id="phone">' +
+                                    '<input type="hidden" name="urutan[]" value="'+x+'">' +
+                                    '<br><a href="#" class="remove_field btn btn-danger float-right"><i class="fa fa-trash"></i> Hapus Field</a>'+
+                              '</div>'); //add input box
+		}
+	});
+
+	$(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+		e.preventDefault(); $(this).parent('div').remove(); x--;
+	})
+});
 </script>
 <script>
     function myFunction() {

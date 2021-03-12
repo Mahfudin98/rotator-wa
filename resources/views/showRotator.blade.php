@@ -33,49 +33,21 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">No Hp</th>
-                                    <th scope="col">Pixel</th>
-                                    <th scope="col">Pesan</th>
-                                    <th scope="col">Link</th>
-                                    <th scope="col">Tipe Pengurutan</th>
-                                    <th scope="col">Jumlah CS/Rotator</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Nama Rotator</th>
+                                    <th scope="col">Nomor Urut Rotator</th>
+                                    <th scope="col">Nama CS</th>
+                                    <th scope="col">No HP</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($link as $row)
+                                @forelse ($rotator as $row)
                                 <tr>
                                     <td>#</td>
-                                    <th>
-                                        @if ($row->phone == null)
-                                        <a href="{{url('/rotator/view/' . $row->id)}}">{{$row->name}}</a>
-                                        @else
-                                        {{$row->name}}
-                                        @endif
-                                    </th>
+                                    <th>{{$row->link->name}}</th>
+                                    <td>{{$row->urutan}}</td>
+                                    <td>{{$row->name}}</td>
                                     <td>{{preg_replace("/^62/", "0", $row->phone)}}</td>
-                                    <td>{{$row->pixel}}</td>
-                                    <td>{{$row->pesan}}</td>
-                                    <td>{{$row->link}}</td>
-                                    <td>
-                                        @if ($row->link_type == 0)
-                                            <span class="badge badge-secondary">Single</span>
-                                        @elseif ($row->link_type == 1)
-                                            <span class="badge badge-info">Berurutan</span>
-                                        @elseif ($row->link_type == 2)
-                                            <span class="badge badge-success">Random</span>
-                                        @endif
-                                    </td>
-                                    <td>{{$row->jumlah_rotator}}</td>
-                                    <td>
-                                        @if ($row->status == 0)
-                                            <span class="badge badge-success">Draf</span>
-                                        @else
-                                            <span class="badge badge-success">Aktif</span>
-                                        @endif
-                                    </td>
                                     <td>
                                         <a href="">
                                             <i class="btn btn-danger fa fa-edit"></i>

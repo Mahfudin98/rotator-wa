@@ -24,6 +24,9 @@ Route::post('/single-rotator', [RotatorController::class, 'postSingle'])->name('
 Route::get('/add-rotator', function () {
     return view('rotatoradd');
 })->name('rotator');
+
+Route::get('/{link}', [RotatorController::class, 'showUrl'])->name('link');
+Route::get('/rotator/view/{id}', [RotatorController::class, 'showRotator'])->name('show.rotator');
 Route::post('/add-rotator', [RotatorController::class, 'postRotator'])->name('post.rotator');
 
 Route::get('/dashboard', function () {
