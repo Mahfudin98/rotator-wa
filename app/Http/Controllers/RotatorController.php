@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Click;
 use App\Models\Link;
 use App\Models\Rotator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use App\Helpers\UserSystemInfoHelper;
+use Carbon\Carbon;
 
 class RotatorController extends Controller
 {
@@ -109,11 +112,84 @@ class RotatorController extends Controller
 
     public function showUrl($link)
     {
-        $links = Link::where('link', $link)->first();
-        // $rotator = $links->rotator()->where('link_id', $links->id)->first();
-        // $rotator = Rotator::all();
-        $urut = Rotator::all()->where('link_id', $links->id)->random();
+        // get ip
+        $getip = UserSystemInfoHelper::get_ip();
+        $getbrowser = UserSystemInfoHelper::get_browsers();
+        $getdevice = UserSystemInfoHelper::get_device();
+        $getos = UserSystemInfoHelper::get_os();
 
-        return view('link', compact('links', 'urut'));
+
+        $links = Link::where('link', $link)->first();
+        $urut = $links->jumlah_rotator;
+        $rotator = Rotator::where('link_id', $links->id)->orderBy('urutan', 'asc')->first();
+        $click = Click::where('url_name', $link)->latest()->first();
+        if ($click != null) {
+            $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$urut);
+            if ($click->urut < $urut) {
+                $print = $click->urut+1;
+                $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$print);
+                $create = Click::create([
+                    'click_time' => Carbon::now(),
+                    'url_name' => $links->link,
+                    'urut'  => $print,
+                    'referrer' => $getbrowser,
+                    'user_device' => $getdevice,
+                    'ip_address' => $getip
+                ]);
+
+                $update = $links->update([
+                    'count_link' => $links->count_link+1,
+                ]);
+
+            } elseif ($click->urut > $urut) {
+                $print = 1;
+                $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$print);
+                $create = Click::create([
+                    'click_time' => Carbon::now(),
+                    'url_name' => $links->link,
+                    'urut'  => $print,
+                    'referrer' => $getbrowser,
+                    'user_device' => $getdevice,
+                    'ip_address' => $getip
+                ]);
+                $update = $links->update([
+                    'count_link' => $links->count_link+1,
+                ]);
+
+            }else {
+                $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$rotator->urutan);
+                $create = Click::create([
+                    'click_time' => Carbon::now(),
+                    'url_name' => $links->link,
+                    'urut'  => $rotator->urutan,
+                    'referrer' => $getbrowser,
+                    'user_device' => $getdevice,
+                    'ip_address' => $getip
+                ]);
+                $update = $links->update([
+                    'count_link' => $links->count_link+1,
+                ]);
+
+            }
+        } else {
+            $create = Click::create([
+                'click_time' => Carbon::now(),
+                'url_name' => $links->link,
+                'urut'  => $rotator->urutan,
+                'referrer' => $getbrowser,
+                'user_device' => $getdevice,
+                'ip_address' => $getip
+            ]);
+
+            $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$create->urut);
+            $update = $links->update([
+                'count_link' => $links->count_link+1,
+            ]);
+        }
+
+        // $jatah = $rotator;
+
+        // dd($nomor);
+        return view('link', compact('nomor', 'links'));
     }
 }
