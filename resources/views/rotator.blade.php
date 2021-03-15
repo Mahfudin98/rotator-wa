@@ -55,8 +55,20 @@
                                         {{$row->name}}
                                         @endif
                                     </th>
-                                    <td>{{preg_replace("/^62/", "0", $row->phone)}}</td>
-                                    <td>{{$row->pixel}}</td>
+                                    <td>
+                                        @if ($row->phone != null)
+                                        {{preg_replace("/^62/", "0", $row->phone)}}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($row->pixel != null)
+                                        {{$row->pixel}}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>{{$row->pesan}}</td>
                                     <td>{{$row->link}}</td>
                                     <td>

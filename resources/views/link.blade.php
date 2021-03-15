@@ -103,7 +103,7 @@
                         <img src="{{ asset('img/logo-ls.png') }}" class="img-thumbnail" alt="...">
                     </div>
                     <h3 class="text-uppercase">{{$links->name}}</h3>
-                    <h4><strong>{{$links->phone}}</strong></h4>
+                    <h4><strong>{{preg_replace("/^62/", "0", $links->phone)}}</strong></h4>
                     <a href="https://api.whatsapp.com/send?phone={{ $links->phone }}&text={{ urlencode(strtolower($links->pesan)) }}"><button class="btn btn-success"><i class="fab fa-whatsapp"></i> Whataspp</button></a>
                     <div>Akan dialihkan dalam <span id="time"></span> detik!</div>
                 </div>

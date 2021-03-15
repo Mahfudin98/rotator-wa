@@ -17,8 +17,8 @@
                       <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukan Harga Produk" required>
                     </div>
                     <div class="mb-3">
-                      <label for="berat" class="form-label">Berat (gr)</label>
-                      <input type="number" class="form-control" name="weight" id="weight" placeholder="Masukkan Berat (gram)" placeholder="cont : 1" required>
+                      <label for="berat" class="form-label">Berat (Kg)</label>
+                      <input type="number" class="form-control" name="weight" id="weight" placeholder="Masukkan Berat (Kg)" placeholder="cont : 1" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="province_id">Provinsi</label>
@@ -45,12 +45,20 @@
                         <p class="text-danger">{{ $errors->first('district_id') }}</p>
                     </div>
                     <div class="mb-3">
+                        <label for="metode" class="form-label">Metode Pembayaran</label>
+                        <select class="form-control" name="metode" id="metode" required>
+                            <option>Pilih Kecamatan Dulu</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="courier" class="form-label">Kurir</label>
                         <select class="form-control" name="courier" id="courier" required>
-                            <option>Pilih Kecamatan Dulu</option>
+                            <option>Pilih Metode Dulu</option>
                         </select>
                         {{-- <input type="text" name="ongkos" id="ongkos" disabled> --}}
                     </div>
+
+
                     {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
                 </form>
             </div>
@@ -59,9 +67,10 @@
                     <h2 class="text-center">Result</h2>
                     <div class="text-justify">
                         <p>Harga Produk : <strong id="outharga">Rp. 0</strong></p>
-                        <p>Berat Produk : <strong id="berat">0 gr</strong></p>
+                        <p>Berat Produk : <strong id="berat">0 Kg</strong></p>
                         <p>Harga Ongkir : <strong id="ongkir">Rp. 0</strong></p>
                         <hr>
+                        <strong id="biaya"></strong>
                         <p>Total pembayaran : <strong id="total">Rp. 0</strong></p>
                     </div>
                 </div>
@@ -228,20 +237,44 @@
             }
         });
     })
+
     $('#district_id').on('change', function() {
-        $('#courier').empty()
-        $('#courier').append('<option value="">Loading...</option>')
+        $('#metode').empty()
+        $('#metode').append('<option value="">Loading...</option>')
         $.ajax({
             success: function(html){
-                $('#courier').empty()
-                $('#courier').append('<option value="">Pilih Kurir</option>')
-                $('#courier').append(`
-                        <option value="jne">JNE</option>
-                        <option value="jnt">JNT</option>
+                $('#metode').empty()
+                $('#metode').append('<option value="">Pilih Metode</option>')
+                $('#metode').append(`
+                        <option value="tf">Transfer</option>
+                        <option value="cod">COD</option>
                     `)
             }
         });
     })
+
+    $('#metode').on('change', function() {
+        $('#courier').empty()
+        $('#courier').append('<option value="">Loading...</option>')
+        $.ajax({
+            success: function(html){
+                var metode = $('select[name=metode]').val()
+                $('#courier').empty()
+                $('#courier').append('<option value="">Pilih Kurir</option>')
+                if (metode == 'tf') {
+                    $('#courier').append(`
+                        <option value="jne">JNE</option>
+                        <option value="jnt">JNT</option>
+                    `)
+                } else {
+                    $('#courier').append(`
+                        <option value="jnt">JNT</option>
+                    `)
+                }
+            }
+        });
+    })
+
     $('#courier').on('change', function() {
             $('#ongkir').empty()
             $('#ongkir').append('Loading...')
@@ -251,27 +284,47 @@
             $('#berat').append('Loading...')
             $('#total').empty()
             $('#total').append('Loading...')
+            let berat = $('#weight').val();
+            var weight = parseInt(berat) * 1000;
             $.ajax({
                 url:"{{ url('/api/cost') }}",
                 type: "POST",
                 data: {
                         destination:         $('select[name=district_id]').val(),
                         courier:             $('select[name=courier]').val(),
-                        weight:              $('#weight').val(),
+                        weight:              weight,
                     },
                 success: function (response) {
                     if (response) {
                         $('#ongkos').val(response[0].value)
                         var ongkir = numeral(response[0]['value']).format('0,0');
                         let harga = $('#harga').val()
-                        $('#ongkir').text('Rp. ' + ongkir);
-                        let total = parseInt(harga) + parseInt(response[0]['value'])
-                        var hasil = numeral(total).format('0,0');
-                        var numharga = numeral(harga).format('0,0');
-                        var beratjs = $('#weight').val()
-                        $('#berat').text(beratjs + ' gr')
-                        $('#outharga').text('Rp. ' + numharga)
-                        $('#total').text('Rp. ' + hasil)
+                        var metode = $('select[name=metode]').val()
+                        if (metode == 'cod') {
+                            var biaya = (3/100)*parseInt(harga)
+                            $('#ongkir').text('Rp. ' + ongkir);
+                            let total = parseInt(harga) + parseInt(response[0]['value']) + parseInt(biaya)
+                            var hasil = numeral(total).format('0,0');
+                            var numharga = numeral(harga).format('0,0');
+                            var beratjs = $('#weight').val()
+                            $('#berat').text(beratjs + ' Kg')
+                            $('#outharga').text('Rp. ' + numharga)
+                            $('#total').text('Rp. ' + hasil)
+                            var outbiaya = numeral(biaya).format('0,0');
+                            $('#biaya').text('Biaya COD 3% : Rp. ' + outbiaya)
+                        } else {
+                            var biaya = 0
+                            $('#ongkir').text('Rp. ' + ongkir);
+                            let total = parseInt(harga) + parseInt(response[0]['value']) + parseInt(biaya)
+                            var hasil = numeral(total).format('0,0');
+                            var numharga = numeral(harga).format('0,0');
+                            var beratjs = $('#weight').val()
+                            $('#berat').text(beratjs + ' Kg')
+                            $('#outharga').text('Rp. ' + numharga)
+                            $('#total').text('Rp. ' + hasil)
+                            $('#biaya').text('-')
+                        }
+
                     }
                 },
                 error: function (response) {
