@@ -48,7 +48,7 @@ class RotatorController extends Controller
             'email' => $request->email,
         ]);
 
-        return redirect()->back()->with(['success' => 'https://lsskincare.id/'.$link->link]);
+        return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/'.$link->link]);
         // dd($link);
     }
 
@@ -96,7 +96,7 @@ class RotatorController extends Controller
                 }
             }
 
-            return redirect()->back()->with(['success' => 'https://lsskincare.id/'.$link->link]);
+            return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/'.$link->link]);
         } catch (\Throwable $e) {
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
