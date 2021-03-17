@@ -21,7 +21,7 @@
                             <!-- KEMUDIAN NAME-NYA ADALAH Q YANG AKAN MENAMPUNG DATA PENCARIAN -->
                             <input type="text" name="q" class="form-control" placeholder="Cari..." value="{{ request()->q }}">
                             <div class="input-group-append">
-                                <button type="input" class="btn btn-secondary" type="button">Cari</button>
+                                <button type="input" class="btn btn-secondary" type="button">Cari Pixel</button>
                             </div>
                         </div>
                     </form>
