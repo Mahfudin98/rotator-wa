@@ -16,10 +16,12 @@ class RotatorController extends Controller
 {
     public function dashboard()
     {
-        $link = Link::orderBy('id', 'DESC')->paginate(10);
+        $link = Link::orderBy('id', 'DESC');
         if (request()->q != '') {
-            $link = $link->where('pixel', request()->q);
+            $link = $link->where('pixel', 'LIKE', '%' . request()->q . '%');
         }
+        $link = $link->paginate(10);
+
         return view('dashboard', compact('link'));
     }
     public function index()

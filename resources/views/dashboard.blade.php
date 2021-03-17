@@ -122,7 +122,7 @@
                         </div>
 
                         <div class="card-footer" style="background-color: #f18484">
-                            {!! $link->links('pagination::default') !!}
+                           {{  $link->links('pagination::simple-tailwind')  }}
                         </div>
                     </div>
                 </div>
