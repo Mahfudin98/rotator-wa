@@ -14,10 +14,30 @@ use Carbon\Carbon;
 
 class RotatorController extends Controller
 {
+    public function dashboard()
+    {
+        $link = Link::orderBy('id', 'DESC')->paginate(10);
+        if (request()->q != '') {
+            $link = $link->where('pixel', request()->q);
+        }
+        return view('dashboard', compact('link'));
+    }
     public function index()
     {
-        $link = Link::orderBy('id', 'DESC')->get();
+        $link = Link::orderBy('id', 'DESC')->paginate(10);
+        if (request()->q != '') {
+            $link = $link->where('pixel', request()->q);
+        }
         return view('rotator', compact('link'));
+    }
+
+    public function edit($id)
+    {
+        $link = Link::find($id);
+        $rotator = Rotator::where('link_id', $link->id)->orderBy('urutan', 'asc')->get();
+        $urut = Rotator::where('link_id', $link->id)->orderBy('urutan', 'desc')->first();
+
+        return view('editrotator', compact('link', 'rotator', 'urut'));
     }
 
     public function create()
@@ -102,12 +122,126 @@ class RotatorController extends Controller
         }
     }
 
+    public function updateRotator(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'phone' => 'nullable',
+            'type_pixel' => 'nullable',
+            'pixel' => 'nullable',
+            'link' => 'required',
+            'pesan' => 'required',
+            'email' => 'required',
+        ]);
+
+        $link = Link::find($id);
+
+        try {
+            $link->update([
+                'name' => $request->name,
+                'type_pixel' => $request->type_pixel,
+                'pixel' => $request->pixel,
+                'phone' => $request->phone,
+                'link' => Str::slug($request->link),
+                'link_type' => $request->link_type,
+                'pesan' => $request->pesan,
+                'email' => $request->email,
+                'status' => $request->status
+            ]);
+
+            return redirect()->route('dashboard')->with(['success' => 'Data berhasil diperbarui']);
+        } catch (\Throwable $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function tambah($link)
+    {
+        $links = Link::where('link', $link)->first();
+
+        return view('add', compact('links'));
+    }
+
+    public function postTambah(Request $request)
+    {
+        $this->validate($request, [
+            'csname' => 'required',
+            'phone' => 'required',
+            'urutan' => 'required',
+        ]);
+
+        try {
+            $data = $request->all();
+
+            if ($data['csname'] != null) {
+                foreach ($data['csname'] as $item => $value) {
+                    $data2 = array(
+                        'link_id' => $request->link_id,
+                        'urutan' => $data['urutan'][$item],
+                        'name' => $data['csname'][$item],
+                        'phone' => preg_replace("/^0/", "62", $data['phone'][$item]),
+                    );
+                    $rotators = Rotator::create($data2);
+                    $rotators = Rotator::where('link_id', $request->link_id)->max('urutan');
+
+                    $link = Link::where('id', $request->link_id)->first();
+                    $link->update([
+                        'jumlah_rotator' => $rotators,
+                    ]);
+                }
+            }
+
+            return redirect()->back()->with(['success' => 'CS Telah berhasil ditambah']);
+        } catch (\Throwable $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function guestShowRotator($id)
+    {
+        $link = Link::find($id);
+        $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
+        return view('guestshow', compact('link', 'rotator'));
+    }
+
     public function showRotator($id)
     {
         $link = Link::find($id);
-        $rotator = Rotator::where('link_id', $id)->get();
+        $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
 
         return view('showRotator', compact('link', 'rotator'));
+    }
+
+    public function updateRot(Request $request, $id)
+    {
+        $rotator = Rotator::find($id);
+        $rotator->update([
+            'link_id' => $request->link_id,
+            'urutan' => $request->urutan,
+            'name' => $request->csname,
+            'phone' => preg_replace("/^0/", "62", $request->phone),
+        ]);
+
+        $rot = Rotator::where('link_id', $rotator->link_id)->max('urutan');
+        $link = Link::where('id', $rotator->link_id)->first();
+        $link->update([
+            'jumlah_rotator' => $rot,
+        ]);
+
+        return redirect()->back()->with(['success' => 'Data Berhasil diperbahauri']);
+    }
+
+    public function deleteCS($id)
+    {
+        $rotator = Rotator::find($id);
+        $rotator->delete();
+        $rot = Rotator::where('link_id', $rotator->link_id)->max('urutan');
+        $link = Link::where('id', $rotator->link_id)->first();
+        $link->update([
+            'jumlah_rotator' => $rot,
+        ]);
+
+        return redirect()->back()->with(['success' => 'CS Berhasil dihapus']);
     }
 
     public function showUrl($link)

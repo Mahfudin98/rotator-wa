@@ -1,185 +1,201 @@
-@extends('layouts.layout')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('List Data CS '.$link->link) }}
+        </h2>
+    </x-slot>
 
-@section('title')
-    Rotator
-@endsection
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="container">
+                        <div class="text-center">
+                            @if (session('success'))
+                            <div class="alert alert-success">
+                                {{session('success')}}
+                            </div>
+                            @endif
 
-@section('content')
-<main class="container">
-    <div class="row mb-1">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header with-border" style="background-color: #f75858">
-                    <h4 class="card-title text-white">
-                        List Rotator
-                    </h4>
-                    <div class="float-right">
-                        <a href="{{ route('single') }}" class="btn btn-dark">Tamabah Single Rotator</a>
-                        <a href="{{ route('rotator') }}" class="btn btn-dark">Tambah Multi Rotator</a>
+                            @if (session('error'))
+                            <div class="alert alert-error text-white disable">
+                                {{session('error')}}
+                            </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
-
-                <div class="card-body" style="background-color: #f27272">
-                    <form action="" method="get">
-                        <div class="input-group mb-3 col-md-3 float-right">
-                            <input type="text" name="q" class="form-control" placeholder="Cari..." value="">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="submit">Cari</button>
+                    <div class="card">
+                        <div class="card-header with-border" style="background-color: #f75858">
+                            <h4 class="card-title text-white">
+                                List Rotator
+                            </h4>
+                            <div class="float-right">
+                                <a href="#" data-toggle="modal" data-target="#add" class="btn btn-dark">Tambah Rotator CS</a>
                             </div>
                         </div>
-                    </form>
-                    <div class="table-responsive">
-                        <table class="table table-danger table-hover table-striped">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Nama Rotator</th>
-                                    <th scope="col">Nomor Urut Rotator</th>
-                                    <th scope="col">Nama CS</th>
-                                    <th scope="col">No HP</th>
-                                    <th scope="col">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($rotator as $row)
-                                <tr>
-                                    <td>#</td>
-                                    <th>{{$row->link->name}}</th>
-                                    <td>{{$row->urutan}}</td>
-                                    <td>{{$row->name}}</td>
-                                    <td>{{preg_replace("/^62/", "0", $row->phone)}}</td>
-                                    <td>
-                                        <a href="">
-                                            <i class="btn btn-danger fa fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                @empty
 
-                                @endforelse
-                            </tbody>
-                        </table>
+                        <div class="card-body" style="background-color: #f27272">
+                            <div class="table-responsive">
+                                <table class="table table-danger table-hover table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nama Rotator</th>
+                                            <th scope="col">Nomor Urut Rotator</th>
+                                            <th scope="col">Nama CS</th>
+                                            <th scope="col">No HP</th>
+                                            <th scope="col">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($rotator as $row)
+                                        <tr>
+                                            <td>#</td>
+                                            <th>{{$link->name}}</th>
+                                            <td>{{$row->urutan}}</td>
+                                            <td>{{$row->name}}</td>
+                                            <td>{{preg_replace("/^62/", "0", $row->phone)}}</td>
+                                            <td>
+                                                <form action="{{ route('delete.cs',$row->id) }}" method="post">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a class="btn btn-primary" data-toggle="modal" data-target="#rotator{{ $row->id }}">
+                                                        <i class="fas fa-edit text-white"></i>
+                                                    </a>
+                                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @empty
+
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-footer" style="background-color: #f18484">
+
+                        </div>
                     </div>
-                </div>
-
-                <div class="card-footer" style="background-color: #f18484">
-
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- <div class="row">
-      <div class="col-md-8">
-        <h3 class="pb-4 mb-4 fst-italic border-bottom">
-          From the Firehose
-        </h3>
-
-        <article class="blog-post">
-          <h2 class="blog-post-title">Sample blog post</h2>
-          <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p>
-
-          <p>This blog post shows a few different types of content that’s supported and styled with Bootstrap. Basic typography, images, and code are all supported.</p>
-          <hr>
-          <p>Yeah, she dances to her own beat. Oh, no. You could've been the greatest. 'Cause, baby, <a href="#">you're a firework</a>. Maybe a reason why all the doors are closed. Open up your heart and just let it begin. So très chic, yeah, she's a classic.</p>
-          <blockquote>
-            <p>Bikinis, zucchinis, Martinis, no weenies. I know there will be sacrifice but that's the price. <strong>This is how we do it</strong>. I'm not sticking around to watch you go down. You think you're so rock and roll, but you're really just a joke. I know one spark will shock the world, yeah yeah. Can't replace you with a million rings.</p>
-          </blockquote>
-          <p>Trying to connect the dots, don't know what to tell my boss. Before you met me I was alright but things were kinda heavy. You just gotta ignite the light and let it shine. Glitter all over the room <em>pink flamingos</em> in the pool. </p>
-          <h2>Heading</h2>
-          <p>Suiting up for my crowning battle. If you only knew what the future holds. Bring the beat back. Peach-pink lips, yeah, everybody stares.</p>
-          <h3>Sub-heading</h3>
-          <p>You give a hundred reasons why, and you say you're really gonna try. Straight stuntin' yeah we do it like that. Calling out my name. ‘Cause I, I’m capable of anything.</p>
-          <pre><code>Example code block</code></pre>
-          <p>Before you met me I was alright but things were kinda heavy. You just gotta ignite the light and let it shine.</p>
-          <h3>Sub-heading</h3>
-          <p>You got the finest architecture. Passport stamps, she's cosmopolitan. Fine, fresh, fierce, we got it on lock. Never planned that one day I'd be losing you. She eats your heart out.</p>
-          <ul>
-            <li>Got a motel and built a fort out of sheets.</li>
-            <li>Your kiss is cosmic, every move is magic.</li>
-            <li>Suiting up for my crowning battle.</li>
-          </ul>
-          <p>Takes you miles high, so high, 'cause she’s got that one international smile.</p>
-          <ol>
-            <li>Scared to rock the boat and make a mess.</li>
-            <li>I could have rewrite your addiction.</li>
-            <li>I know you get me so I let my walls come down.</li>
-          </ol>
-          <p>After a hurricane comes a rainbow.</p>
-        </article><!-- /.blog-post -->
-
-        <article class="blog-post">
-          <h2 class="blog-post-title">Another blog post</h2>
-          <p class="blog-post-meta">December 23, 2013 by <a href="#">Jacob</a></p>
-
-          <p>I am ready for the road less traveled. Already <a href="#">brushing off the dust</a>. Yeah, you're lucky if you're on her plane. I used to bite my tongue and hold my breath. Uh, She’s a beast. I call her Karma (come back). Black ray-bans, you know she's with the band. I can't sleep let's run away and don't ever look back, don't ever look back.</p>
-          <blockquote>
-            <p>Growing fast into a <strong>bolt of lightning</strong>. Be careful Try not to lead her on</p>
-          </blockquote>
-          <p>I'm intrigued, for a peek, heard it's fascinating. Oh oh! Wanna be a victim ready for abduction. She's got that international smile, oh yeah, she's got that one international smile. Do you ever feel, feel so paper thin. I’m gon’ put her in a coma. Sun-kissed skin so hot we'll melt your popsicle.</p>
-          <p>This is transcendental, on another level, boy, you're my lucky star.</p>
-        </article><!-- /.blog-post -->
-
-        <article class="blog-post">
-          <h2 class="blog-post-title">New feature</h2>
-          <p class="blog-post-meta">December 14, 2013 by <a href="#">Chris</a></p>
-
-          <p>From Tokyo to Mexico, to Rio. Yeah, you take me to utopia. I'm walking on air. We'd make out in your Mustang to Radiohead. I mean the ones, I mean like she's the one. Sun-kissed skin so hot we'll melt your popsicle. Slow cooking pancakes for my boy, still up, still fresh as a Daisy.</p>
-          <ul>
-            <li>I hope you got a healthy appetite.</li>
-            <li>You're never gonna be unsatisfied.</li>
-            <li>Got a motel and built a fort out of sheets.</li>
-          </ul>
-          <p>Don't need apologies. Boy, you're an alien your touch so foreign, it's <em>supernatural</em>, extraterrestrial. Talk about our future like we had a clue. I can feel a phoenix inside of me.</p>
-        </article><!-- /.blog-post -->
-
-        <nav class="blog-pagination" aria-label="Pagination">
-          <a class="btn btn-outline-primary" href="#">Older</a>
-          <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Newer</a>
-        </nav>
-
+@foreach ($rotator as $row)
+  <div class="modal fade" id="rotator{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Edit Rotator</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('update.rot', $row->id) }}" method="post">
+            @csrf
+            @method('PUT')
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <div>
+                        <input type="hidden" name="link_id" value="{{ $link->id }}">
+                        <label class="form-label" for="phone">Nomor Urut</label>
+                        <input type="number" name="urutan" class="form-control" value="{{ $row->urutan }}">
+                        <label class="form-label" for="namecs">Nama CS</label>
+                        <input type="text" name="csname" class="form-control" value="{{ $row->name }}" id="namecs">
+                        <label class="form-label" for="phone">No HP</label>
+                        <input type="text" name="phone" class="form-control" value="{{preg_replace("/^62/", "0", $row->phone)}}" id="phone">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
       </div>
-
-      <div class="col-md-4">
-        <div class="p-4 mb-3 bg-light rounded">
-          <h4 class="fst-italic">About</h4>
-          <p class="mb-0">Saw you downtown singing the Blues. Watch you circle the drain. Why don't you let me stop by? Heavy is the head that <em>wears the crown</em>. Yes, we make angels cry, raining down on earth from up above.</p>
-        </div>
-
-        <div class="p-4">
-          <h4 class="fst-italic">Archives</h4>
-          <ol class="list-unstyled mb-0">
-            <li><a href="#">March 2014</a></li>
-            <li><a href="#">February 2014</a></li>
-            <li><a href="#">January 2014</a></li>
-            <li><a href="#">December 2013</a></li>
-            <li><a href="#">November 2013</a></li>
-            <li><a href="#">October 2013</a></li>
-            <li><a href="#">September 2013</a></li>
-            <li><a href="#">August 2013</a></li>
-            <li><a href="#">July 2013</a></li>
-            <li><a href="#">June 2013</a></li>
-            <li><a href="#">May 2013</a></li>
-            <li><a href="#">April 2013</a></li>
-          </ol>
-        </div>
-
-        <div class="p-4">
-          <h4 class="fst-italic">Elsewhere</h4>
-          <ol class="list-unstyled">
-            <li><a href="#">GitHub</a></li>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Facebook</a></li>
-          </ol>
-        </div>
-      </div>
-
     </div>
-    <!-- /.row --> --}}
+  </div>
+@endforeach
 
-</main><!-- /.container -->
-@endsection
+  <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add Rotator</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('post.tambah') }}" method="post" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-body">
+                <fieldset>
+                    <legend>Tambahkan CS Disini!</legend>
+                    <div class="input_fields_wrap mb-3">
+                        <div>
+                            <input type="hidden" name="link_id" value="{{ $link->id }}">
+                            <label class="form-label" for="namecs">Nama CS</label>
+                            <input type="text" name="csname[]" class="form-control" id="namecs">
+                            <label class="form-label" for="phone">No HP</label>
+                            <input type="text" name="phone[]" class="form-control" id="phone">
+                            <input type="hidden" name="urutan[]" value="{{ $link->jumlah_rotator+1 }}">
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="float-right">
+                    <button class="add_field_button btn btn-success"><i class="fa fa-plus"></i> Tambah Field</button>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-@section('js')
+  <script>
+    $(document).ready(function() {
+        var max_fields      = 10; //maximum input boxes allowed
+        var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
+        var add_button      = $(".add_field_button"); //Add button ID
 
-@endsection
+        var x = {{ $link->jumlah_rotator+1 }}; //initlal text box count
+        $(add_button).click(function(e){ //on add input button click
+            e.preventDefault();
+            if(x < max_fields){ //max input box allowed
+                x++; //text box increment
+                $(wrapper).append('<div class="mb-3">' +
+                                        '<hr>' +
+                                        '<input type="hidden" name="link_id" value="{{ $link->id }}">' +
+                                        '<label class="form-label" for="namecs">Nama CS</label>' +
+                                        '<input type="text" name="csname[]" class="form-control" id="namecs">' +
+                                        '<label class="form-label" for="phone">No HP</label>' +
+                                        '<input type="text" name="phone[]" class="form-control" id="phone">' +
+                                        '<input type="hidden" name="urutan[]" value="'+x+'">' +
+                                        '<br><a href="#" class="remove_field btn btn-danger float-right"><i class="fa fa-trash"></i> Hapus Field</a>'+
+                                  '</div>'); //add input box
+            }
+        });
+
+        $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+            e.preventDefault(); $(this).parent('div').remove(); x--;
+        })
+    });
+    </script>
+    <script>
+        function myFunction() {
+          var copyText = document.getElementById("myInput");
+          copyText.select();
+          copyText.setSelectionRange(0, 99999)
+          document.execCommand("copy");
+          alert("Url Berhasil di copy : " + copyText.value);
+        }
+    </script>
+</x-app-layout>
+
+

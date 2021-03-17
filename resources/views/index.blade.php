@@ -265,6 +265,7 @@
                     $('#courier').append(`
                         <option value="jne">JNE</option>
                         <option value="jnt">JNT</option>
+                        <option value="anteraja">Anter Aja</option>
                     `)
                 } else {
                     $('#courier').append(`

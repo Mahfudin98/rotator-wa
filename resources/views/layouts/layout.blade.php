@@ -53,16 +53,26 @@
           <div class="row flex-nowrap justify-content-between align-items-center">
             <div class="col-4 pt-1">
               <a class="link-secondary" href="{{route('index')}}"><i class="fa fa-home" style="font-size:30px; color: #f27272;"></i></a> |
+              @guest
               <a class="link-secondary" href="{{route('rotator.list')}}"><i class="fa fa-user" style="font-size:30px; color: #f27272;"></i></a>
+              @else
+              <a class="link-secondary" href="{{route('dashboard')}}"><i class="fa fa-user" style="font-size:30px; color: #f27272;"></i></a>
+              @endguest
             </div>
             <div class="col-4 text-center">
               <a class="blog-header-logo text-dark" href="{{route('index')}}">
                   <img src="{{ asset('img/logo-ls.png') }}" width="50" height="50" alt="Logo">
               </a>
             </div>
-            <div class="col-4 d-flex justify-content-end align-items-center">
-              <a class="btn btn-sm btn-outline-primary" href="{{ route('login') }}">Masuk</a>
-            </div>
+            @guest
+                <div class="col-4 d-flex justify-content-end align-items-center">
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('login') }}">Masuk</a>
+                </div>
+            @else
+                <div class="col-4 d-flex justify-content-end align-items-center">
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('dashboard') }}">{{ Auth::user()->name }}</a>
+                </div>
+            @endguest
           </div>
         </header>
     </div>
