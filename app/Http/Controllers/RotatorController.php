@@ -206,11 +206,11 @@ class RotatorController extends Controller
     {
         $link = Link::find($id);
         $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
-        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'asc');
+        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'desc');
         if (request()->q != '') {
             $click = $click->where('click_time', 'LIKE', '%' . request()->q . '%');
         }
-        $click = $click->paginate(10);
+        $click = $click->paginate(50);
         return view('guestshow', compact('link', 'rotator', 'click'));
     }
 
@@ -218,11 +218,11 @@ class RotatorController extends Controller
     {
         $link = Link::find($id);
         $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
-        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'asc');
+        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'desc');
         if (request()->q != '') {
-            $click = $click->where('click_time', 'LIKE', '%' . request()->q . '%');
+            $click = $click->where('click_time', 'Like', '%' . request()->q . '%');
         }
-        $click = $click->paginate(10);
+        $click = $click->paginate(50);
         return view('showRotator', compact('link', 'rotator', 'click'));
     }
 

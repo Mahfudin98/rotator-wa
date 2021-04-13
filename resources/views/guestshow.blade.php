@@ -81,10 +81,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $i = 1;
+                                @endphp
                                 @forelse ($click as $row)
                                     @foreach ($rotator->where('urutan', $row->urut) as $item)
                                     <tr>
-                                        <td>#</td>
+                                        <td>{{ $i++ }}</td>
                                         <th>{{date("d/M/Y", strtotime($row->click_time))}}</th>
                                         <td>{{ $item->name }}</td>
                                         <td>{{ $row->user_device }}</td>
