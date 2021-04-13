@@ -10,4 +10,8 @@ class Click extends Model
     use HasFactory;
     protected $guarded = [];
 
+    public function rotator()
+    {
+        return $this->belongsTo(Rotator::class);
+    }
 }

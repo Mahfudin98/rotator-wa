@@ -206,15 +206,24 @@ class RotatorController extends Controller
     {
         $link = Link::find($id);
         $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
-        return view('guestshow', compact('link', 'rotator'));
+        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'asc');
+        if (request()->q != '') {
+            $click = $click->where('click_time', 'LIKE', '%' . request()->q . '%');
+        }
+        $click = $click->paginate(10);
+        return view('guestshow', compact('link', 'rotator', 'click'));
     }
 
     public function showRotator($id)
     {
         $link = Link::find($id);
         $rotator = Rotator::where('link_id', $id)->orderBy('urutan', 'asc')->get();
-
-        return view('showRotator', compact('link', 'rotator'));
+        $click = Click::where('url_name', $link->link)->orderBy('click_time', 'asc');
+        if (request()->q != '') {
+            $click = $click->where('click_time', 'LIKE', '%' . request()->q . '%');
+        }
+        $click = $click->paginate(10);
+        return view('showRotator', compact('link', 'rotator', 'click'));
     }
 
     public function updateRot(Request $request, $id)

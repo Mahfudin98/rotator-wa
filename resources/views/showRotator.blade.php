@@ -26,11 +26,10 @@
                     </div>
                     <div class="card">
                         <div class="card-header with-border" style="background-color: #f75858">
-                            <h4 class="card-title text-white">
-                                List Rotator
-                            </h4>
-                            <div class="float-right">
-                                <a href="#" data-toggle="modal" data-target="#add" class="btn btn-dark">Tambah Rotator CS</a>
+                            <div class="card-title ">
+                                <div class="float-right">
+                                    <a href="#" data-toggle="modal" data-target="#add" class="btn btn-dark">Tambah Rotator CS</a>
+                                </div>
                             </div>
                         </div>
 
@@ -78,6 +77,84 @@
 
                         </div>
                     </div>
+                </div>
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="card">
+                        <div class="card-header with-border" style="background-color: #f75858">
+                            <div class="float-right">
+                                <form action="{{ route('show.rotator',$link->id) }}" method="get">
+                                    <div class="input-group float-right">
+                                        <!-- KEMUDIAN NAME-NYA ADALAH Q YANG AKAN MENAMPUNG DATA PENCARIAN -->
+                                        <input type="date" name="q" class="form-control">
+                                        <div class="input-group-append">
+                                            <button type="input" class="btn btn-secondary" type="button">Cari</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card-body" style="background-color: #f27272">
+                            <div class="table-responsive">
+                                <table class="table table-danger table-hover table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Click Time</th>
+                                            <th scope="col">Urut</th>
+                                            <th scope="col">User Device</th>
+                                            <th scope="col">IP Address</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($click as $row)
+                                            @foreach ($rotator->where('urutan', $row->urut) as $item)
+                                            <tr>
+                                                <td>#</td>
+                                                <th>{{$row->click_time}}</th>
+                                                <td>{{ $item->name }}</td>
+                                                <td>{{ $row->user_device }}</td>
+                                                <td>{{ $row->ip_address }}</td>
+                                            </tr>
+                                            @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center"> Data Tidak ditemukan</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer" style="background-color: #f18484">
+                                {{ $click->links() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="container">
+                        <div class="text-center">
+                            @if (session('success'))
+                            <div class="alert alert-success">
+                                {{session('success')}}
+                            </div>
+                            @endif
+
+                            @if (session('error'))
+                            <div class="alert alert-error text-white disable">
+                                {{session('error')}}
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

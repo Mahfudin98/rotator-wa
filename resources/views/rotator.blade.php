@@ -19,9 +19,9 @@
                     <form action="{{ route('rotator.list') }}" method="get">
                         <div class="input-group mb-3 col-md-3 float-right">
                             <!-- KEMUDIAN NAME-NYA ADALAH Q YANG AKAN MENAMPUNG DATA PENCARIAN -->
-                            <input type="text" name="q" class="form-control" placeholder="Cari..." value="{{ request()->q }}">
+                            <input type="text" name="q" class="form-control" placeholder="Cari Pixel..." value="{{ request()->q }}">
                             <div class="input-group-append">
-                                <button type="input" class="btn btn-secondary" type="button">Cari Pixel</button>
+                                <button type="input" class="btn btn-secondary" type="button">Cari</button>
                             </div>
                         </div>
                     </form>
