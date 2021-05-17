@@ -48,17 +48,19 @@
         }
 
         window.onload = function () {
-            var fiveMinutes = 3,
+            var fiveMinutes = 0,
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
         };
     </script>
+    {{-- start syntax fb --}}
     <script>
         !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init', '{{ $links->pixel }}');fbq('track', '{{ $links->type_pixel }}');
     </script>
     <noscript>
         <img height="1" width="1" style="display:none"src="https://www.facebook.com/tr?id={{ $links->pixel }}&ev={{ $links->type_pixel }}&noscript=1"/>
     </noscript>
+    {{-- end syntax fb --}}
     <style>
         .tengah {
           padding: 100px 0;
@@ -94,7 +96,7 @@
         var pesan = '{{ urlencode(strtolower($links->pesan)) }}'
         setTimeout(function () {
             window.location.href = 'https://api.whatsapp.com/send?phone='+phone+'&text='+pesan+''; //will redirect to your blog page (an ex: blog.html)
-        }, 3000);
+        }, 0000);
     </script>
     @else
     <div class="tengah">
@@ -123,7 +125,7 @@
             var pesan = '{{ urlencode(strtolower($links->pesan)) }}'
             setTimeout(function () {
                 window.location.href = 'https://api.whatsapp.com/send?phone='+phone+'&text='+pesan+''; //will redirect to your blog page (an ex: blog.html)
-            }, 3000);
+            }, 0000);
         </script>
     @endif
     <!-- Option 1: Bootstrap Bundle with Popper -->
