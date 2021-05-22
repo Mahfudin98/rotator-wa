@@ -99,22 +99,31 @@
                                 <table class="table table-danger table-hover table-striped">
                                     <thead class="table-dark">
                                         <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Click Time</th>
-                                            <th scope="col">Urut</th>
-                                            <th scope="col">User Device</th>
-                                            <th scope="col">IP Address</th>
+                                            <th class="bg-danger text-light" scope="col">#</th>
+                                            <th class="bg-primary" scope="col">Click Date</th>
+                                            <th class="bg-warning text-dark" scope="col">Urut</th>
+                                            <th class="bg-warning text-dark" scope="col">User Device</th>
+                                            <th class="bg-warning text-dark" scope="col">IP Address</th>
+                                            <th class="bg-success" scope="col">Clik Time </th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $i = 1;
+                                        @endphp
                                         @forelse ($click as $row)
                                             @foreach ($rotator->where('urutan', $row->urut) as $item)
                                             <tr>
-                                                <td>#</td>
-                                                <th>{{$row->click_time}}</th>
-                                                <td>{{ $item->name }}</td>
-                                                <td>{{ $row->user_device }}</td>
-                                                <td>{{ $row->ip_address }}</td>
+                                                <td class="bg-danger text-light">{{ $i++ }}</td>
+                                                <th class="bg-primary text-light">{{date("d/M/Y", strtotime($row->click_time))}}</th>
+                                                <td class="bg-warning">{{ $item->name }}</td>
+                                                <td class="bg-warning">{{ $row->user_device }}</td>
+                                                <td class="bg-warning">
+                                                    <div class="alert alert-danger text-center" role="alert">
+                                                        {{ $row->ip_address }}
+                                                    </div>
+                                                </td>
+                                                <td class="bg-success text-light">Jam {{ date("H:i", strtotime($row->created_at))}}</td>
                                             </tr>
                                             @endforeach
                                         @empty
