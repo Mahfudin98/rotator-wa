@@ -80,7 +80,7 @@
     <hr>
     @yield('content')
     <footer class="container text-center">
-        <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+        <p>Developed By <a href="https://www.instagram.com/mahfudin_nawawi/" target="_blank" rel="noopener noreferrer"> <i class="fa fa-instagram fa-lg"></i>@mahfudin_nawawi</a>.</p>
     </footer>
 
     <!-- Optional JavaScript; choose one of the two! -->
