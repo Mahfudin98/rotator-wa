@@ -270,6 +270,7 @@
                 } else {
                     $('#courier').append(`
                         <option value="jnt">JNT</option>
+                        <option value="jne">JNE</option>
                     `)
                 }
             }
