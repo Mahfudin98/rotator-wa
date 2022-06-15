@@ -1,17 +1,19 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
     @if ($links->link_type == 1)
-    <title>Menghubungi {{ $nomor[0]->name }}</title>
+        <title>Menghubungi {{ $nomor[0]->name }}</title>
     @else
-    <title>Menghubungi {{ $links->name }}</title>
+        <title>Menghubungi {{ $links->name }}</title>
     @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
 
@@ -22,6 +24,7 @@
                 diff,
                 minutes,
                 seconds;
+
             function timer() {
                 // get the number of seconds that have elapsed since
                 // startTimer() was called
@@ -47,7 +50,7 @@
             setInterval(timer, 1000);
         }
 
-        window.onload = function () {
+        window.onload = function() {
             var fiveMinutes = 0,
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
@@ -55,86 +58,119 @@
     </script>
     {{-- start syntax fb --}}
     <script>
-        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init', '{{ $links->pixel }}');fbq('track', '{{ $links->type_pixel }}');
+        ! function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{{ $links->pixel }}');
+        fbq('track', 'PageView');
+        fbq('track', 'Lead');
     </script>
     <noscript>
-        <img height="1" width="1" style="display:none"src="https://www.facebook.com/tr?id={{ $links->pixel }}&ev={{ $links->type_pixel }}&noscript=1"/>
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id={{ $links->pixel }}&ev=PageView&noscript=1" />
     </noscript>
     {{-- end syntax fb --}}
     <style>
         .tengah {
-          padding: 100px 0;
-          text-align: center;
+            padding: 100px 0;
+            text-align: center;
         }
     </style>
-  </head>
-  <body style="background-color: #ffb19d">
+</head>
+
+<body style="background-color: #ffb19d">
     @if ($links->link_type == 1)
-    <div class="tengah">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tengah">
+            <div class="row">
+                <div class="col-md-4">
 
-            </div>
-            <div class="col-md-4">
-                <div class="shadow-sm p-3 mb-5 bg-body rounded">
-                    <div class="text-center">
-                        <img src="{{ asset('img/logo-ls.png') }}" class="img-thumbnail" alt="...">
+                </div>
+                <div class="col-md-4">
+                    <div class="shadow-sm p-3 mb-5 bg-body rounded">
+                        <div class="text-center">
+                            <img src="{{ asset('img/logo-ls.png') }}" class="img-thumbnail" alt="...">
+                        </div>
+                        <h3 class="text-uppercase">{{ $nomor[0]->name }}</h3>
+                        <h4><strong>{{ preg_replace('/^62/', '0', $nomor[0]->phone) }}</strong></h4>
+                        <a
+                            href="https://api.whatsapp.com/send?phone={{ $nomor[0]->phone }}&text={{ urlencode(strtolower($links->pesan)) }}"><button
+                                class="btn btn-success"><i class="fab fa-whatsapp"></i> Whataspp</button></a>
+                        <div>Akan dialihkan dalam <span id="time"></span> detik!</div>
                     </div>
-                    <h3 class="text-uppercase">{{$nomor[0]->name}}</h3>
-                    <h4><strong>{{preg_replace("/^62/", "0", $nomor[0]->phone)}}</strong></h4>
-                    <a href="https://api.whatsapp.com/send?phone={{ $nomor[0]->phone }}&text={{ urlencode(strtolower($links->pesan)) }}"><button class="btn btn-success"><i class="fab fa-whatsapp"></i> Whataspp</button></a>
-                    <div>Akan dialihkan dalam <span id="time"></span> detik!</div>
+                </div>
+                <div class="col-md-4">
+
                 </div>
             </div>
-            <div class="col-md-4">
-
-            </div>
         </div>
-    </div>
-    <script>
-        var phone = '{{ $nomor[0]->phone }}'
-        var pesan = '{{ urlencode(strtolower($links->pesan)) }}'
-        setTimeout(function () {
-            window.location.href = 'https://api.whatsapp.com/send?phone='+phone+'&text='+pesan+''; //will redirect to your blog page (an ex: blog.html)
-        }, 0000);
-    </script>
+        <script>
+            var phone = '{{ $nomor[0]->phone }}'
+            var pesan = '{{ urlencode(strtolower($links->pesan)) }}'
+            setTimeout(function() {
+                window.location.href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + pesan +
+                    ''; //will redirect to your blog page (an ex: blog.html)
+            }, 0000);
+        </script>
     @else
-    <div class="tengah">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="tengah">
+            <div class="row">
+                <div class="col-md-4">
 
-            </div>
-            <div class="col-md-4">
-                <div class="shadow-sm p-3 mb-5 bg-body rounded">
-                    <div class="text-center">
-                        <img src="{{ asset('img/logo-ls.png') }}" class="img-thumbnail" alt="...">
+                </div>
+                <div class="col-md-4">
+                    <div class="shadow-sm p-3 mb-5 bg-body rounded">
+                        <div class="text-center">
+                            <img src="{{ asset('img/logo-ls.png') }}" class="img-thumbnail" alt="...">
+                        </div>
+                        <h3 class="text-uppercase">{{ $links->name }}</h3>
+                        <h4><strong>{{ preg_replace('/^62/', '0', $links->phone) }}</strong></h4>
+                        <a
+                            href="https://api.whatsapp.com/send?phone={{ $links->phone }}&text={{ urlencode(strtolower($links->pesan)) }}"><button
+                                class="btn btn-success"><i class="fab fa-whatsapp"></i> Whataspp</button></a>
+                        <div>Akan dialihkan dalam <span id="time"></span> detik!</div>
                     </div>
-                    <h3 class="text-uppercase">{{$links->name}}</h3>
-                    <h4><strong>{{preg_replace("/^62/", "0", $links->phone)}}</strong></h4>
-                    <a href="https://api.whatsapp.com/send?phone={{ $links->phone }}&text={{ urlencode(strtolower($links->pesan)) }}"><button class="btn btn-success"><i class="fab fa-whatsapp"></i> Whataspp</button></a>
-                    <div>Akan dialihkan dalam <span id="time"></span> detik!</div>
+                </div>
+                <div class="col-md-4">
+
                 </div>
             </div>
-            <div class="col-md-4">
-
-            </div>
         </div>
-    </div>
         <script>
             var phone = '{{ $links->phone }}'
             var pesan = '{{ urlencode(strtolower($links->pesan)) }}'
-            setTimeout(function () {
-                window.location.href = 'https://api.whatsapp.com/send?phone='+phone+'&text='+pesan+''; //will redirect to your blog page (an ex: blog.html)
+            setTimeout(function() {
+                window.location.href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + pesan +
+                    ''; //will redirect to your blog page (an ex: blog.html)
             }, 0000);
         </script>
     @endif
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"
+        integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js"
+        integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous">
+    </script>
     -->
-  </body>
+</body>
+
 </html>
