@@ -122,7 +122,7 @@
             setTimeout(function() {
                 window.location.href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + pesan +
                     ''; //will redirect to your blog page (an ex: blog.html)
-            }, 0000);
+            }, 3000);
         </script>
     @else
         <div class="tengah">
@@ -154,7 +154,7 @@
             setTimeout(function() {
                 window.location.href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + pesan +
                     ''; //will redirect to your blog page (an ex: blog.html)
-            }, 0000);
+            }, 3000);
         </script>
     @endif
     <!-- Option 1: Bootstrap Bundle with Popper -->
