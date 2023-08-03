@@ -25,17 +25,21 @@ Route::get('city', [IndexController::class, 'getCity']);
 Route::get('district', [IndexController::class, 'getDistrict']);
 Route::post('cost', [IndexController::class, 'getCourier']);
 
-Route::group(['middleware' => 'api.token.verify'], function () {
-    Route::get('/check', function () {
-        return 'success';
-    });
-    Route::controller(RotatorApiController::class)->group(function () {
+
+Route::controller(RotatorApiController::class)->group(function () {
+    Route::get('/rotator-click/{url}', 'rotatorClick');
+    Route::group(['middleware' => 'api.token.verify'], function () {
         Route::get('/rotator-list', 'getRotator');
-        Route::get('/rotator-detail/{id}', 'getIdRotator');
-        Route::get('/rotator-click-detail/{id}', 'getClickID');
+        Route::get('/rotator-detail/{link}', 'getIdRotator');
+        Route::get('/rotator-detail-list/{link}', 'getIDRotatorList');
+        Route::get('/rotator-click-detail/{link}', 'getClickID');
+        Route::post('/rotator-add-website', 'addWebsite');
+        Route::post('/rotator-add-multi-rotator', 'addMultiRotator');
     });
-    Route::controller(RotatorAnaliticApiController::class)->group(function () {
-        Route::get('/router-click-line/{id}', 'getLineClickID');
+});
+Route::controller(RotatorAnaliticApiController::class)->group(function () {
+    Route::group(['middleware' => 'api.token.verify'], function () {
+        Route::get('/router-click-line/{link}', 'getLineClickID');
         Route::get('/router-all-click-line', 'getLineClick');
     });
 });

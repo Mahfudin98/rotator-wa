@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class RotatorAnaliticApiController extends Controller
 {
-    function getLineClickID($id)
+    function getLineClickID($url)
     {
         $year = request()->year;
         $month = request()->month;
@@ -19,8 +19,7 @@ class RotatorAnaliticApiController extends Controller
 
         $parse = Carbon::parse($filter);
         $array_date = range($parse->startOfMonth()->format('d'), $parse->endOfMonth()->format('d'));
-        $link = Link::find($id);
-        $click = Click::where('url_name', $link->link)
+        $click = Click::where('url_name', $url)
             ->where('click_time', 'LIKE', '%' . $filter . '%')
             ->select(
                 DB::raw('COUNT(click_time) as count'),

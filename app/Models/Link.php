@@ -10,7 +10,7 @@ class Link extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'phone', 'type_pixel', 'pixel', 'pesan', 'link', 'link_type', 'jumlah_rotator', 'count_link', 'email', 'status'];
+    protected $fillable = ['website_id', 'name', 'phone', 'type_pixel', 'pixel', 'pesan', 'link', 'link_type', 'jumlah_rotator', 'count_link', 'email', 'status', 'created_at'];
 
     public function rotator()
     {
