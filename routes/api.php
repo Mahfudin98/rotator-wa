@@ -33,6 +33,7 @@ Route::controller(RotatorApiController::class)->group(function () {
         Route::get('/rotator-detail/{link}', 'getIdRotator');
         Route::get('/rotator-detail-list/{link}', 'getIDRotatorList');
         Route::get('/rotator-click-detail/{link}', 'getClickID');
+        Route::get('/rotator-list-website', 'getWebsite');
         Route::post('/rotator-add-website', 'addWebsite');
         Route::post('/rotator-add-multi-rotator', 'addMultiRotator');
     });

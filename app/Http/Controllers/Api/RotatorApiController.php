@@ -275,6 +275,21 @@ class RotatorApiController extends Controller
         return response()->json(['status' => true, 'message' => 'Data berhasil diinput', 'data' => $web], 200);
     }
 
+    function getWebsite()
+    {
+        $web = Website::where('website_status', 1)->get();
+        $data = [];
+        foreach ($web as $value) {
+            $data[] = [
+                'website_id' => $value->website_id,
+                'website_name' => $value->website_name,
+                'website_link' => $value->website_link
+            ];
+        }
+
+        return response()->json(['status' => true, 'data' => $data], 200);
+    }
+
     function addMultiRotator(Request $request)
     {
         $this->validate($request, [
@@ -292,6 +307,7 @@ class RotatorApiController extends Controller
                 'link_type' => 1,
                 'pesan' => $request->pesan,
                 'email' => 'mahfudin@lsskincare.id',
+                'count_link' => 0
             ]);
 
             $rotator = Link::find($link['id']);
