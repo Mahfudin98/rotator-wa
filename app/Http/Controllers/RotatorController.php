@@ -272,6 +272,8 @@ class RotatorController extends Controller
         $urut = $links->jumlah_rotator;
         $rotator = Rotator::where('link_id', $links->id)->orderBy('urutan', 'asc')->first();
         $click = Click::where('url_name', $link)->latest()->first();
+        $website = null;
+
         if ($links->website_id) {
             $websites = Website::where('website_id', $links->website_id)->first();
             $website = $websites->website_name;
