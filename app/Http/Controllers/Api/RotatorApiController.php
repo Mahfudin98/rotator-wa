@@ -28,7 +28,7 @@ class RotatorApiController extends Controller
         $getos = UserSystemInfoHelper::get_os();
 
         $urut = $links->jumlah_rotator;
-        $rotator = Rotator::where('link_id', $links->id)->orderBy('urutan', 'asc')->first();
+        $rotator = Rotator::where('link_id', $links->id)->where('status', 1)->orderBy('urutan', 'asc')->first();
         $click = Click::where('url_name', $url)->latest()->first();
         $website = null;
 
@@ -47,6 +47,7 @@ class RotatorApiController extends Controller
                         'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $print,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
                         'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
@@ -63,6 +64,7 @@ class RotatorApiController extends Controller
                         'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $print,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
                         'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
@@ -76,6 +78,7 @@ class RotatorApiController extends Controller
                         'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $rotator->urutan,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
                         'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
@@ -92,6 +95,7 @@ class RotatorApiController extends Controller
                     'website_name' => $website,
                     'url_name' => $links->link,
                     'urut'  => $rotator->urutan,
+                    'rotator_id' => $rotator->id,
                     'referrer' => $getbrowser,
                     'user_device' => $getdevice . ',' . $getos,
                     'ip_address' => $getip
@@ -109,6 +113,7 @@ class RotatorApiController extends Controller
                 'website_name' => $website,
                 'url_name' => $nomor->name,
                 'urut'  => $nomor->jumlah_rotator,
+                'rotator_id' => $nomor->id,
                 'referrer' => $getbrowser,
                 'user_device' => $getdevice . ',' . $getos,
                 'ip_address' => $getip
@@ -154,13 +159,16 @@ class RotatorApiController extends Controller
                     $type = 'Random';
                     break;
             }
+            $number = $value->link_type == 1 ? null : preg_replace('/^62/', '0', $value->phone);
             $data[] = [
                 'id'   => $value->id,
+                'website_id' => $value->website_id,
                 'name' => $value->name,
                 'type' => $type,
                 'link' => $value->link,
+                'phone' => $number,
                 'count_click' => $value->count_link,
-                'status' => $value->status == 1 ? 'Aktif' : 'Tidak Aktif',
+                'status' => $value->status,
                 'created' => $value->created_at->format('Y-m-d'),
             ];
         }
@@ -215,7 +223,7 @@ class RotatorApiController extends Controller
     function getIDRotatorList($url)
     {
         $link = Link::where('link', $url)->first();
-        $rotator = Rotator::where('link_id', $link->id)->orderBy('urutan', 'asc')->get();
+        $rotator = Rotator::where('link_id', $link->id)->where('status', 1)->orderBy('urutan', 'asc')->get();
         $data = [];
         foreach ($rotator as $value) {
             $data[] = [
@@ -339,5 +347,131 @@ class RotatorApiController extends Controller
             DB::rollback();
             return response()->json(['error' => $e->getMessage()]);
         }
+    }
+
+    function addSingleRotator(Request $request)
+    {
+        $this->validate($request, [
+            'phone' => 'required',
+            'website_id' => 'required',
+            'name' => 'required',
+            'pesan' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $link = Link::create([
+                'website_id' => $request->website_id,
+                'name' => $request->name,
+                'phone' => preg_replace("/^0/", "62", $request->phone),
+                'link_type' => 0,
+                'link' => md5($request->website_id . $request->phone . $request->name) . '-' . Str::slug($request->name),
+                'pesan' => $request->pesan,
+                'email' => 'mahfudin@lsskincare.id',
+                'count_link' => 0
+            ]);
+            $website = Website::where('website_id', $request->website_id)->first();
+            $website->update([
+                'website_total_link' => $website->website_total_link + 1
+            ]);
+            DB::commit();
+            return response()->json(['status' => true, 'link' => $link], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    function updateRotator(Request $request, $id)
+    {
+        $link = Link::find($id);
+
+        $link->update([
+            'website_id' => $request->website_id,
+            'name' => $request->name,
+            'phone' => $link->type == 0 ? preg_replace("/^0/", "62", $request->phone) : null,
+            'status' => $request->status,
+        ]);
+    }
+
+    function updatePesan(Request $request, $id)
+    {
+        $link = Link::find($id);
+
+        $link->update([
+            'pesan' => $request->pesan
+        ]);
+    }
+
+    function addRotator(Request $request, $id)
+    {
+        $link = Link::find($id);
+
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+
+            if ($data['csname'] != null) {
+                foreach ($data['csname'] as $item => $value) {
+                    $data2 = array(
+                        'link_id' => $link->id,
+                        'urutan' => $data['urutan'][$item],
+                        'name' => $data['csname'][$item],
+                        'phone' => preg_replace("/^0/", "62", $data['phone'][$item]),
+                    );
+                    $rotators = Rotator::create($data2);
+                    $rotators = Rotator::where('link_id', $link->id)->max('urutan');
+
+                    $link->update([
+                        'jumlah_rotator' => $rotators,
+                    ]);
+                }
+            }
+            DB::commit();
+            return response()->json(['status' => true, 'data' => $data2], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    function editRotator(Request $request, $id)
+    {
+        $rotator = Rotator::find($id);
+        $rotator->update([
+            'urutan' => $request->urutan,
+            'name' => $request->csname,
+            'phone' => preg_replace("/^0/", "62", $request->phone),
+        ]);
+        $rot = Rotator::where('link_id', $rotator->link_id)->max('urutan');
+        $link = Link::where('id', $rotator->link_id)->first();
+        $link->update([
+            'jumlah_rotator' => $rot,
+        ]);
+        return response()->json(['status' => true, 'data' => $rotator], 200);
+    }
+
+    function nonAktifRotator($id)
+    {
+        $rotator = Rotator::find($id);
+        $link = Link::where('id', $rotator->link_id)->first();
+        $rotators = Rotator::where('link_id', $link->id)->where('status', 1)->orderBy('urutan', 'asc')->get();
+        foreach ($rotators as $value) {
+            $urutan = $rotator->urutan < $value->urutan ? $value->urutan - 1 : $value->urutan;
+            Rotator::where('link_id', $link->id)
+                ->where('id', $value->id)
+                ->update([
+                    'urutan' => $urutan
+                ]);
+        }
+        $rotator->update([
+            'urutan' => 0,
+            'status' => 0,
+        ]);
+        $rot = Rotator::where('link_id', $rotator->link_id)->max('urutan');
+        $link->update([
+            'jumlah_rotator' => $rot,
+        ]);
+        return response()->json(['status' => true, 'data' => $rotator], 200);
     }
 }

@@ -36,6 +36,12 @@ Route::controller(RotatorApiController::class)->group(function () {
         Route::get('/rotator-list-website', 'getWebsite');
         Route::post('/rotator-add-website', 'addWebsite');
         Route::post('/rotator-add-multi-rotator', 'addMultiRotator');
+        Route::post('/rotator-add-single-rotator', 'addSingleRotator');
+        Route::post('/rotator-update-link-rotator/{id}', 'updateRotator');
+        Route::post('/rotator-update-pesan/{id}', 'updatePesan');
+        Route::post('/rotator-add-rotator/{id}', 'addRotator');
+        Route::post('/rotator-update-rotator/{id}', 'editRotator');
+        Route::delete('/rotator-remove-rotator/{id}', 'nonAktifRotator');
     });
 });
 Route::controller(RotatorAnaliticApiController::class)->group(function () {
