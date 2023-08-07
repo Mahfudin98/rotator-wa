@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use App\Helpers\UserSystemInfoHelper;
+use App\Models\Website;
 use Carbon\Carbon;
 
 class RotatorController extends Controller
@@ -73,7 +74,7 @@ class RotatorController extends Controller
             'email' => $request->email,
         ]);
 
-        return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/'.$link->link]);
+        return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/' . $link->link]);
         // dd($link);
     }
 
@@ -121,7 +122,7 @@ class RotatorController extends Controller
                 }
             }
 
-            return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/'.$link->link]);
+            return redirect()->back()->with(['success' => 'https://orderan.lsstore.id/cs/' . $link->link]);
         } catch (\Throwable $e) {
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
@@ -271,78 +272,89 @@ class RotatorController extends Controller
         $urut = $links->jumlah_rotator;
         $rotator = Rotator::where('link_id', $links->id)->orderBy('urutan', 'asc')->first();
         $click = Click::where('url_name', $link)->latest()->first();
+        if ($links->website_id) {
+            $websites = Website::where('website_id', $links->website_id)->first();
+            $website = $websites->website_name;
+        }
         if ($links->link_type == 1) {
             if ($click != null) {
-                $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$urut);
+                $nomor = DB::select('select * from rotators where link_id =' . $links->id . ' and urutan=' . $urut);
                 if ($click->urut < $urut) {
-                    $print = $click->urut+1;
-                    $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$print);
+                    $print = $click->urut + 1;
+                    $nomor = DB::select('select * from rotators where link_id =' . $links->id . ' and urutan=' . $print);
                     $create = Click::create([
                         'click_time' => Carbon::now(),
+                        'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $print,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
-                        'user_device' => $getdevice.','. $getos,
+                        'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
                     ]);
 
                     $update = $links->update([
-                        'count_link' => $links->count_link+1,
+                        'count_link' => $links->count_link + 1,
                     ]);
-
                 } elseif ($click->urut > $urut) {
                     $print = 1;
-                    $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$print);
+                    $nomor = DB::select('select * from rotators where link_id =' . $links->id . ' and urutan=' . $print);
                     $create = Click::create([
                         'click_time' => Carbon::now(),
+                        'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $print,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
-                        'user_device' => $getdevice.','. $getos,
+                        'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
                     ]);
                     $update = $links->update([
-                        'count_link' => $links->count_link+1,
+                        'count_link' => $links->count_link + 1,
                     ]);
-
-                }else {
-                    $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$rotator->urutan);
+                } else {
+                    $nomor = DB::select('select * from rotators where link_id =' . $links->id . ' and urutan=' . $rotator->urutan);
                     $create = Click::create([
                         'click_time' => Carbon::now(),
+                        'website_name' => $website,
                         'url_name' => $links->link,
                         'urut'  => $rotator->urutan,
+                        'rotator_id' => $rotator->id,
                         'referrer' => $getbrowser,
-                        'user_device' => $getdevice.','. $getos,
+                        'user_device' => $getdevice . ',' . $getos,
                         'ip_address' => $getip
                     ]);
                     $update = $links->update([
-                        'count_link' => $links->count_link+1,
+                        'count_link' => $links->count_link + 1,
                     ]);
-
                 }
             } else {
                 $create = Click::create([
                     'click_time' => Carbon::now(),
+                    'website_name' => $website,
                     'url_name' => $links->link,
                     'urut'  => $rotator->urutan,
+                    'rotator_id' => $rotator->id,
                     'referrer' => $getbrowser,
-                    'user_device' => $getdevice.','. $getos,
+                    'user_device' => $getdevice . ',' . $getos,
                     'ip_address' => $getip
                 ]);
 
-                $nomor = DB::select('select * from rotators where link_id ='.$links->id. ' and urutan='.$create->urut);
+                $nomor = DB::select('select * from rotators where link_id =' . $links->id . ' and urutan=' . $create->urut);
                 $update = $links->update([
-                    'count_link' => $links->count_link+1,
+                    'count_link' => $links->count_link + 1,
                 ]);
             }
         } elseif ($links->link_type == 0) {
             $nomor = Link::where('link', $link)->first();
             $create = Click::create([
                 'click_time' => Carbon::now(),
-                'url_name' => $nomor->link,
+                'website_name' => $website,
+                'url_name' => $nomor->name,
                 'urut'  => $nomor->jumlah_rotator,
+                'rotator_id' => $nomor->id,
                 'referrer' => $getbrowser,
-                'user_device' => $getdevice.','. $getos,
+                'user_device' => $getdevice . ',' . $getos,
                 'ip_address' => $getip
             ]);
         }
