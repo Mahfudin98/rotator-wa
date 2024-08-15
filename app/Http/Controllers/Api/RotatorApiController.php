@@ -160,16 +160,20 @@ class RotatorApiController extends Controller
                     break;
             }
             $number = $value->link_type == 1 ? null : preg_replace('/^62/', '0', $value->phone);
+            $website = Website::where('website_id', $value->website_id)->first();
             $data[] = [
-                'id'   => $value->id,
-                'website_id' => $value->website_id,
-                'name' => $value->name,
-                'type' => $type,
-                'link' => $value->link,
-                'phone' => $number,
-                'count_click' => $value->count_link,
-                'status' => $value->status,
-                'created' => $value->created_at->format('Y-m-d'),
+                'id'           => $value->id,
+                'website'      => $website ? $website->website_name : null,
+                'website_id'   => $value->website_id,
+                'name'         => $value->name,
+                'type'         => $type,
+                'type_id'      => $value->link_type,
+                'link'         => $value->link,
+                'message'      => $value->pesan,
+                'phone'        => $number,
+                'count_click'  => $value->count_link,
+                'status'       => $value->status,
+                'created'      => Carbon::parse($value->created_at)->translatedFormat('d F Y'),
             ];
         }
 
@@ -214,7 +218,7 @@ class RotatorApiController extends Controller
             'jumlah_rotator' => $link->jumlah_rotator,
             'count_click'    => $link->count_link,
             'status'         => $link->status == 1 ? 'Aktif' : 'Tidak Aktif',
-            'created'        => $link->created_at,
+            'created'        => Carbon::parse($link->created_at)->translatedFormat('d F Y'),
         ];
 
         return response()->json(['status' => true, 'data' => $data], 200);
@@ -252,7 +256,7 @@ class RotatorApiController extends Controller
         foreach ($click as $value) {
             $cs = Rotator::where('link_id', $link->id)->where('urutan', $value->urut)->first();
             $clicks[] = [
-                'date_time' => Carbon::parse($value->created_at)->format('d-M-Y H:i:s'),
+                'date_time' => Carbon::parse($value->created_at)->translatedFormat('d F Y H:i:s'),
                 'cs' => $cs != null ? $cs->name : $link->name,
                 'browser' => $value->referrer,
                 'device' => $value->user_device,
