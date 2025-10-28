@@ -21,7 +21,9 @@ return [
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '*.lsskincare.cloud'
+    ],
 
     'allowed_headers' => ['*'],
 

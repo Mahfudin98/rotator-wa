@@ -20,7 +20,7 @@ class ApiTokenVerify
         $token = $request->header('Authorization');
         $response = Http::withHeaders([
             'Authorization' => $token
-        ])->get(env('URL_API', 'https://api-report.lsskincare.id/api') . '/login-absen-check');
+        ])->get(env('URL_API', 'https://api-report.lsskincare.cloud/api') . '/login-absen-check');
         if ($response->status() === 200) {
             return $next($request);
         }
